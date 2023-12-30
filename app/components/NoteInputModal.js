@@ -11,15 +11,26 @@ import {
 } from 'react-native';
 import colors from '../misc/colors';
 import RoundIconBtn from './RoundIconBtn';
-import ToastManager, { Toast } from 'toastify-react-native'
+import ToastManager, { Toast } from 'toastify-react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import color from '../misc/colors';
 
 const NoteInputModal = ({ visible, onClose, onSubmit, note, isEdit }) => {
+  const [start, setStart] = useState(false);
   const [title, setTitle] = useState('');
   const [desc, setDesc] = useState('');
   const handleModalClose = () => {
     Keyboard.dismiss();
   };
 
+  const startSpeechToText = () => {
+    //await Voice.start("en-US");
+    setStart(true);
+  };
+  const stopSpeechToText = () => {
+    //await Voice.stop();
+    setStart(false);
+  };
   useEffect(() => {
     if (isEdit) {
       setTitle(note.title);
@@ -33,10 +44,10 @@ const NoteInputModal = ({ visible, onClose, onSubmit, note, isEdit }) => {
   };
 
   const handleSubmit = () => {
-    if (!title.trim() ){
+    if (!title.trim()) {
       onClose();
       return Toast.error('Please enter a title');
-    } 
+    }
 
     if (isEdit) {
       onSubmit(title, desc, Date.now());
@@ -59,7 +70,7 @@ const NoteInputModal = ({ visible, onClose, onSubmit, note, isEdit }) => {
   return (
     <>
       <StatusBar hidden />
-      <ToastManager animationIn='slideInRight'	animationOut='slideOutUp' hasBackdrop= {true} />
+      <ToastManager animationIn='slideInRight' animationOut='slideOutUp' hasBackdrop={true} />
       <Modal visible={visible} animationType='fade'>
         <View style={styles.container}>
           <TextInput
@@ -68,13 +79,24 @@ const NoteInputModal = ({ visible, onClose, onSubmit, note, isEdit }) => {
             placeholder='Title'
             style={[styles.input, styles.title]}
           />
-          <TextInput
-            value={desc}
-            multiline
-            placeholder='Note'
-            style={[styles.input, styles.desc]}
-            onChangeText={text => handleOnChangeText(text, 'desc')}
-          />
+          <View style={styles.recordContainer}>
+            <TextInput
+              value={desc}
+              multiline
+              placeholder='Note'
+              style={[styles.input, styles.desc]}
+              onChangeText={text => handleOnChangeText(text, 'desc')}
+            />
+            <View style={styles.recordIcon} >
+              {!start ?
+                <MaterialCommunityIcons name="text-to-speech" size={35} color={color.PRIMARY} onPress={startSpeechToText} />
+                :
+                <MaterialCommunityIcons name="text-to-speech-off" size={35} color={color.PRIMARY} onPress={stopSpeechToText} />
+              }
+
+            </View>
+          </View>
+
           <View style={styles.btnContainer}>
             <RoundIconBtn
               size={15}
@@ -126,6 +148,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     paddingVertical: 15,
+  },
+  recordIcon: {
+    padding: 10,
+    position: 'absolute',
+    right: 0,
+    marginTop: 20,
+
   },
 });
 
