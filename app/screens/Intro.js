@@ -1,53 +1,69 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
-import { StatusBar, TextInput, Dimensions } from 'react-native'
-import color from '../misc/color'
-import RoundIconBtn from '../components/RoundIconBtn'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useState } from 'react';
+import {
+  View,
+  StyleSheet,
+  Text,
+  TextInput,
+  StatusBar,
+  Dimensions,
+} from 'react-native';
+import RoundIconBtn from '../components/RoundIconBtn';
+import colors from '../misc/colors';
 
-export default function Intro({onFinish}) {
-    const [User,setUser] = useState("");
-    const handleSubmit = async() => {
-        const userName = {name: User};
-        await AsyncStorage.setItem("User", JSON.stringify(userName));
-        if(onFinish)
-            onFinish();
-    }
-    return (
-        <>
-            <StatusBar/>
-            <View style={styles.container}>
-                <Text style={styles.inputTitle}>Enter Your Name To Continue</Text>
-                <TextInput value={User} onChangeText={(e)=>setUser(e)} placeholder='Enter Name' style={styles.input}/>
-                {User.trim().length >= 3?<RoundIconBtn antIconName='arrowright' press={handleSubmit}/>:null}
-            </View>
-        </>
-    )
-}
+const Intro = ({ onFinish }) => {
+  const [name, setName] = useState('');
+  const handleOnChangeText = text => setName(text);
+
+  const handleSubmit = async () => {
+    const user = { name: name };
+    await AsyncStorage.setItem('user', JSON.stringify(user));
+    if (onFinish) onFinish();
+  };
+
+  return (
+    <>
+      <StatusBar hidden />
+      <View style={styles.container}>
+        <Text style={styles.inputTitle}>Enter Your Name to Continue</Text>
+        <TextInput
+          value={name}
+          onChangeText={handleOnChangeText}
+          placeholder='Enter Name'
+          style={styles.textInput}
+        />
+        {name.trim().length >= 3 ? (
+          <RoundIconBtn antIconName='arrowright' onPress={handleSubmit} />
+        ) : null}
+      </View>
+    </>
+  );
+};
+
 const width = Dimensions.get('window').width - 50;
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    input: {
-        height: 40,
-        borderColor: color.PRIMARY,
-        borderWidth: 2,
-        marginTop: 10,
-        padding: 10,
-        width,
-        height: 50,
-        borderRadius: 10,
-        fontSize: 20,
-        color: color.PRIMARY,
-        marginBottom: 15,
-    },
-    inputTitle: {
-        alignSelf: 'center',
-        marginBottom: 5,
-        opacity: 0.5,
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  textInput: {
+    borderWidth: 2,
+    borderColor: colors.PRIMARY,
+    color: colors.PRIMARY,
+    width,
+    height: 50,
+    borderRadius: 10,
+    paddingLeft: 15,
+    fontSize: 25,
+    marginBottom: 15,
+  },
+  inputTitle: {
+    alignSelf: 'flex-start',
+    paddingLeft: 25,
+    marginBottom: 5,
+    opacity: 0.5,
+  },
+});
 
-    },
-})
+export default Intro;
