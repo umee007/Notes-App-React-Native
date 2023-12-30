@@ -59,7 +59,7 @@ const NoteInputModal = ({ visible, onClose, onSubmit, note, isEdit }) => {
   return (
     <>
       <StatusBar hidden />
-      <ToastManager animationIn='slideInRight'	animationOut='slideOutUp' hasBackdrop='true' />
+      <ToastManager animationIn='slideInRight'	animationOut='slideOutUp' hasBackdrop= {true} />
       <Modal visible={visible} animationType='fade'>
         <View style={styles.container}>
           <TextInput
